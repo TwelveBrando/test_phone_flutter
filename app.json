@@ -1,0 +1,13 @@
+{
+  "expo": {
+    "name": "Launch Check",
+    "slug": "launch-check",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.example.launchcheck"
+    }
+  }
+}
