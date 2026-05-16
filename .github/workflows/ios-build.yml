@@ -22,19 +22,26 @@ jobs:
       - name: Build iOS app (no codesign)
         run: flutter build ios --release --no-codesign
 
-      - name: Package IPA
+      - name: Package IPA for Sideloadly
         run: |
-          mkdir -p build/ios/ipa
-          cd build/ios/iphoneos
-          mkdir -p Payload
-          cp -r Runner.app Payload/
-          zip -qr ../ipa/test_phone_flutter.ipa Payload
-          ls -lh ../ipa/
+          APP_PATH="build/ios/iphoneos/Runner.app"
+          if [ ! -d "$APP_PATH" ]; then
+            APP_PATH="$(find build/ios -type d -name 'Runner.app' | head -n 1)"
+          fi
+          if [ ! -d "$APP_PATH" ]; then
+            echo "Runner.app not found. build/ios contents:"
+            find build/ios -maxdepth 4
+            exit 1
+          fi
+          mkdir -p build/ios/ipa/Payload
+          cp -R "$APP_PATH" build/ios/ipa/Payload/
+          cd build/ios/ipa
+          zip -rq test_phone_flutter.ipa Payload
+          ls -la
 
       - name: Upload IPA
         uses: actions/upload-artifact@v4
         with:
           name: test_phone_flutter-ipa
           path: build/ios/ipa/test_phone_flutter.ipa
-          if-no-files-found: error
           retention-days: 14
